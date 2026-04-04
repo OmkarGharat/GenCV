@@ -9,19 +9,19 @@
     }
 
     ::-webkit-scrollbar {
-        @apply w-2.5 h-2.5;
+        @apply w-1.5 h-1.5;
     }
 
     ::-webkit-scrollbar-track {
-        @apply bg-gray-200;
+        @apply bg-transparent;
     }
 
     ::-webkit-scrollbar-thumb {
-        @apply bg-fuchsia-600;
+        @apply bg-gray-300 rounded-full;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        @apply bg-fuchsia-700;
+        @apply bg-gray-400;
     }
 
     textarea, input:focus {
@@ -39,11 +39,11 @@
 
 @layer components{
     .pi{
-        @apply p-2 mb-2 text-black bg-white rounded text-[0.9rem];
+        @apply p-2 mb-2 text-gray-800 bg-gray-50 border border-gray-200 rounded text-[0.9rem] focus:ring-2 focus:ring-zinc-800 focus:border-transparent transition-all;
     }
 
     .profileInput{
-        @apply pi file:border-0 file:bg-fuchsia-500 file:text-white file:rounded-sm;
+        @apply pi file:border-0 file:bg-zinc-800 file:text-white file:rounded-sm file:cursor-pointer file:px-3 file:py-1 hover:file:bg-black;
     }
 
     .flex-col-gap-2{
@@ -55,11 +55,11 @@
     }
 
     .other-input{
-        @apply p-2 mb-2 text-black bg-white rounded focus:placeholder-transparent;
+        @apply p-2 mb-2 text-gray-800 bg-gray-50 border border-gray-200 rounded focus:ring-2 focus:ring-zinc-800 focus:border-transparent transition-all;
     }
 
     .input-title{
-        @apply text-[1rem] text-white font-semibold;
+        @apply text-[1.1rem] text-gray-900 font-bold mb-3 border-b border-gray-100 pb-2;
     }
 
     .f-col{
@@ -134,7 +134,7 @@
     }
 
     .preview::after {
-        content: "Created using https://atsresume.vercel.app/";
+        content: "Created using ZenCV (zencv.app)";
         position: fixed;
         bottom: 0;
         right: 0;

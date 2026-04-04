@@ -1,5 +1,6 @@
 import React, {useContext} from "react";
 import {ResumeContext} from "../../builder";
+import {BsTrash3} from "react-icons/bs";
 
 const PersonalInformation = ({}) => {
   const {resumeData, setResumeData, handleProfilePicture, handleChange} =
@@ -51,14 +52,32 @@ const PersonalInformation = ({}) => {
           value={resumeData.address}
           onChange={handleChange}
         />
-        <input
-          type="file"
-          name="profileImage"
-          accept="image/*"
-          className="profileInput"
-          onChange={handleProfilePicture}
-          placeholder="Profile Picture"
-        />
+        <div className="flex flex-col gap-2">
+          <input
+            type="file"
+            name="profileImage"
+            accept="image/*"
+            className="profileInput"
+            onChange={handleProfilePicture}
+            placeholder="Profile Picture"
+          />
+          {resumeData.profilePicture && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="p-2 h-fit text-white bg-zinc-900 rounded text-xl"
+                aria-label="Remove"
+                onClick={() => {
+                  setResumeData({ ...resumeData, profilePicture: "" });
+                  const fileInput = document.querySelector('.profileInput');
+                  if (fileInput) fileInput.value = '';
+                }}
+              >
+                <BsTrash3/>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

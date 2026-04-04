@@ -13,7 +13,7 @@ import {onDragEndHandler} from "../utils/onDrugEndHandler";
 
 const DragDropContext = dynamic(
   () =>
-    import("react-beautiful-dnd").then((mod) => {
+    import("@hello-pangea/dnd").then((mod) => {
       return mod.DragDropContext;
     }),
   {ssr: false}
@@ -39,9 +39,9 @@ const Preview = () => {
         <DragDropContext onDragEnd={onDragEndHandler}>
           <Header resumeData={resumeData} icons={icons}/>
           <hr className="border-dashed my-2"/>
-          <div className="grid grid-cols-3 gap-6">
-            <LeftSide resumeData={resumeData}/>
-            <RightSide resumeData={resumeData}/>
+          <div id="resume-cols-wrapper" className="grid grid-cols-3 gap-6">
+            <div id="resume-left-col"><LeftSide resumeData={resumeData}/></div>
+            <div id="resume-right-col" className="col-span-2"><RightSide resumeData={resumeData}/></div>
           </div>
         </DragDropContext>
       </A4PageWrapper>

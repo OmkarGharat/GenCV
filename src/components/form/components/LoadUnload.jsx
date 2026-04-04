@@ -28,36 +28,36 @@ const LoadUnload = () => {
   };
 
   return (
-    <div className="flex flex-wrap gap-4 mb-2 justify-center">
-      <div className="inline-flex flex-row items-center gap-2">
-        <h2 className="text-[1.2rem] text-white">Load Data</h2>
-        <label className="p-2 text-white bg-fuchsia-700 rounded cursor-pointer">
-          <FaCloudUploadAlt className="text-[1.2rem] text-white" />
-          <input
-            aria-label="Load Data"
-            type="file"
-            className="hidden"
-            onChange={handleLoad}
-            accept=".json"
-          />
-        </label>
-      </div>
-      <div className="inline-flex flex-row items-center gap-2">
-        <h2 className="text-[1.2rem] text-white">Save Data</h2>
-        <button
-          aria-label="Save Data"
-          className="p-2 text-white bg-fuchsia-700 rounded"
-          onClick={(event) =>
-            handleDownload(
-              resumeData,
-              resumeData.name + " by ATSResume.json",
-              event
-            )
-          }
-        >
-          <FaCloudDownloadAlt className="text-[1.2rem] text-white" />
-        </button>
-      </div>
+    <div className="flex flex-wrap gap-4 mb-6 justify-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100 sticky top-0 z-10">
+      <label className="flex items-center gap-2 px-6 py-3 bg-white text-black border-2 border-black rounded-full cursor-pointer hover:bg-zinc-100 transition-all shadow-sm font-bold">
+        <FaCloudUploadAlt className="text-xl" />
+        <span>Load Backup</span>
+        <input
+          aria-label="Load Data"
+          type="file"
+          className="hidden"
+          onChange={(e) => {
+             handleLoad(e);
+             alert("Data Successfully Loaded!");
+          }}
+          accept=".json"
+        />
+      </label>
+
+      <button
+        aria-label="Save Data"
+        className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full hover:bg-zinc-900 transition-all shadow-sm font-bold"
+        onClick={(event) => {
+          handleDownload(
+            resumeData,
+            resumeData.name + " by ZenCV.json",
+            event
+          );
+        }}
+      >
+        <FaCloudDownloadAlt className="text-xl" />
+        <span>Save Backup</span>
+      </button>
     </div>
   );
 };

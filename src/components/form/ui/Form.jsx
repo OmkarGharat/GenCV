@@ -12,17 +12,17 @@ import TestsAndCertifications from "../components/testsAndCertifications/ui/Test
 
 const Form = () => {
   return (
-    <form className="p-4 bg-fuchsia-600 exclude-print md:max-w-[40%] md:h-screen md:overflow-y-scroll">
+    <form className="p-8 bg-gradient-to-br from-zinc-50 to-zinc-100 exclude-print md:max-w-[40%] md:h-screen md:overflow-y-scroll space-y-8 border-r border-zinc-200 custom-scrollbar">
       <LoadUnload/>
-      <PersonalInformation/>
-      <SocialMedias/>
-      <Summary/>
-      <Educations/>
-      <WorkExperiences/>
-      <Projects/>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><PersonalInformation/></div>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><SocialMedias/></div>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><Summary/></div>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><Educations/></div>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><WorkExperiences/></div>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><Projects/></div>
       <Skills/>
-      <Languages/>
-      <TestsAndCertifications/>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><Languages/></div>
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"><TestsAndCertifications/></div>
     </form>
   );
 };

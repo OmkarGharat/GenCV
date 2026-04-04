@@ -6,16 +6,17 @@ const Skills = () => {
   const {resumeData, setResumeData} = useContext(ResumeContext);
 
   return (
-    <div>
+    <>
       {
         resumeData.skills.map((skill, index) => (
-          <SkillsGroup
-            title={skill.title}
-            key={index}
-          />
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100" key={index}>
+            <SkillsGroup
+              title={skill.title}
+            />
+          </div>
         ))
       }
-    </div>
+    </>
   );
 };
 

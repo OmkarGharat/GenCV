@@ -22,7 +22,7 @@ const SocialMedias = () => {
                 addSocialMedia(resumeData, setResumeData)
               }}
               aria-label="Add"
-              className="p-2 w-[37px] text-white bg-fuchsia-700 rounded text-xl">
+              className="p-2 w-[37px] text-white bg-zinc-900 rounded text-xl">
         <MdAddCircle/>
       </button>
     </div>
