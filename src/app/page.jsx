@@ -31,7 +31,11 @@ const LandingPage = () => {
           automatically structures your experience perfectly for Applicant Tracking Systems. No fluff, just results.
         </p>
         
-        <Link href="/builder" className="mt-8 px-10 py-5 bg-zinc-900 hover:bg-zinc-800 text-zinc-50 rounded-full text-xl font-extrabold shadow-2xl transition-all hover:scale-105 active:scale-95">
+        <Link 
+          href="/builder" 
+          prefetch={true}
+          className="mt-8 px-10 py-5 bg-zinc-900 hover:bg-zinc-800 text-zinc-50 rounded-full text-xl font-extrabold shadow-2xl transition-all hover:scale-105 active:scale-95"
+        >
           Build Your Resume Now
         </Link>
         

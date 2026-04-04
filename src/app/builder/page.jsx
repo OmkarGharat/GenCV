@@ -2,7 +2,12 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 
-const Builder = dynamic(() => import('../../components/builder'), { ssr: false });
+import LoadingScreen from '../../components/LoadingScreen';
+
+const Builder = dynamic(() => import('../../components/builder'), { 
+  ssr: false,
+  loading: () => <LoadingScreen /> 
+});
 
 const Page = () => {
   return (
