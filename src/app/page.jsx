@@ -13,7 +13,7 @@ const LandingPage = () => {
       <nav className="w-full flex items-center justify-between p-6 md:px-12 top-0 z-50 absolute">
         <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center drop-shadow-md">
-               <span className="text-white font-black text-2xl">A</span>
+               <span className="text-white font-black text-2xl">Z</span>
             </div>
             <span className="text-2xl font-black text-black tracking-tighter">ZenCV.</span>
         </div>

@@ -39,7 +39,6 @@ export default function Builder() {
 
   const handleChange = (e) => {
     setResumeData({...resumeData, [e.target.name]: e.target.value});
-    console.log(resumeData);
   };
 
   return (
@@ -57,10 +56,19 @@ export default function Builder() {
           description="ZenCV is a cutting-edge resume builder that helps job seekers create a professional, beautiful resume in minutes. Say goodbye to frustration and wasted time. Create your winning resume with ZenCV today and get noticed by employers."
           keywords="ATS-friendly, Resume optimization, Keyword-rich resume, Applicant Tracking System, ATS resume builder, ATS resume templates, ATS-compliant resume, ATS-optimized CV, ATS-friendly format, ATS resume tips, Resume writing services, Career guidance, Job search in India, Resume tips for India, Professional resume builder, Cover letter writing, Interview preparation, Job interview tips, Career growth, Online job applications, resume builder, free resume builder, resume ats, best free resume builder, resume creator, resume cv, resume design, resume editor, resume maker"
         />
-        <div className="f-col gap-4 md:flex-row justify-evenly max-w-7xl md:mx-auto md:h-screen">
-          {!formClose && (
-            <Form/>
-          )}
+        <div className="flex flex-col md:flex-row max-w-7xl md:mx-auto md:h-screen overflow-hidden">
+          <div 
+            className="transition-all duration-500 ease-in-out shrink-0 overflow-hidden"
+            style={{
+              width: formClose ? '0' : '40%',
+              opacity: formClose ? 0 : 1,
+            }}
+          >
+            {/* Inner wrapper with fixed width prevents content squishing */}
+            <div className="w-[40vw] max-w-[512px]">
+              <Form/>
+            </div>
+          </div>
           <Preview/>
         </div>
         <FormCloseOpenBtn formClose={formClose} setFormClose={setFormClose}/>
