@@ -4,7 +4,7 @@ import {ResumeContext} from "../../../../builder";
 import WorkExperience from "../components/WorkExperience";
 
 const Droppable = dynamic(
-  () => import("react-beautiful-dnd").then((mod) => mod.Droppable),
+  () => import("@hello-pangea/dnd").then((mod) => mod.Droppable),
   {ssr: false}
 );
 
@@ -26,6 +26,7 @@ const WorkExperiences = () => {
             <WorkExperience
               key={index}
               item={item}
+              index={index}
             />
           ))}
           {provided.placeholder}

@@ -1,10 +1,10 @@
-# ATSResume
+# ZenCV
 
-A cutting-edge resume builder that helps job seekers create a professional, ATS-friendly resume in minutes. Our platform uses the latest technology to analyze and optimize your resume for maximum visibility and success with applicant tracking systems. Say goodbye to frustration and wasted time spent on manual resume formatting. Create your winning resume with ATSResume today and get noticed by employers.
+A cutting-edge resume builder that helps job seekers create a professional, beautiful resume in minutes. Our platform uses the latest technology to analyze and optimize your resume for maximum visibility and success. Say goodbye to frustration and wasted time spent on manual resume formatting. Create your winning resume with ZenCV today and get noticed by employers.
 
 ## Demo
 
-#### [https://atsresume.vercel.app/](https://atsresume.vercel.app/)
+#### [ZenCV App](https://zencv.app/)
 ![image](https://user-images.githubusercontent.com/61316762/218017511-fbbaa7da-6154-449f-9e46-8de45b0e6c29.png)
 
 ### Resume Score

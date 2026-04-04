@@ -82,7 +82,7 @@ const Project = ({project, index}) => {
           removeProject(resumeData, setResumeData, index)
         }}
         aria-label="Remove"
-        className="p-2 h-fit text-white bg-fuchsia-700 rounded text-xl"
+        className="p-2 h-fit text-white bg-zinc-900 rounded text-xl"
       >
         <BsTrash3/>
       </button>

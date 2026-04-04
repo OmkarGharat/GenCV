@@ -1,9 +1,9 @@
 import Head from "next/head";
 
 export default function Meta({ title, keywords, description }) {
-    const homepage = "https://atsresume.vercel.app/";
-    const logo = "https://atsresume.vercel.app/assets/logo.png";
-    const fevicon = "https://atsresume.vercel.app/assets/favicon.ico";
+    const homepage = "https://zencv.app/";
+    const logo = "https://zencv.app/assets/logo.png";
+    const fevicon = "https://zencv.app/assets/favicon.ico";
 
     function isiteJsonLd() {
         return {
@@ -46,7 +46,7 @@ export default function Meta({ title, keywords, description }) {
             <meta charSet="utf-8" />
             <link rel="icon" href={fevicon} />
             <title>{title}</title>
-            <meta type="copyright" content="ATSResume" />
+            <meta type="copyright" content="ZenCV" />
             <meta type="author" content="Saurav Hathi" />
             {/* Open Graph */}
             <meta property="og:type" content="website" />
