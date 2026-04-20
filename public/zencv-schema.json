@@ -1,0 +1,124 @@
+{
+  "_instructions": "Fill in all fields below with real resume data. Remove any field you don't have data for (leave it as an empty string or empty array). Dates must be in YYYY-MM-DD format. The 'keyAchievements' field in both workExperience and projects must be a single string with each bullet point separated by a newline character (\\n). Do NOT add any extra keys. When done, load this file into ZenCV using the 'Load Backup' button.",
+
+  "name": "FULL NAME IN UPPERCASE",
+  "position": "Your Target Job Title (e.g. Automation Test Engineer)",
+  "contactInformation": "+91-XXXXXXXXXX",
+  "email": "your.email@example.com",
+  "address": "City, State / Country",
+  "profilePicture": "",
+
+  "socialMedia": [
+    {
+      "_comment": "Supported labels: Github, LinkedIn, Website, Twitter, Portfolio — add/remove objects as needed",
+      "socialMedia": "LinkedIn",
+      "link": "linkedin.com/in/your-profile"
+    },
+    {
+      "socialMedia": "Github",
+      "link": "github.com/your-username"
+    },
+    {
+      "socialMedia": "Website",
+      "link": "your-portfolio.com"
+    }
+  ],
+
+  "summary": "2-4 sentence professional summary. Focus on your years of experience, core skills, domain expertise, and what value you bring to the role. Keep it ATS-friendly by including relevant keywords.",
+
+  "education": [
+    {
+      "_comment": "Add one object per degree. 'school' = degree name, 'degree' = institution name.",
+      "school": "Bachelor of Engineering in Computer Science",
+      "degree": "University / College Name",
+      "startYear": "YYYY-MM-DD",
+      "endYear": "YYYY-MM-DD"
+    }
+  ],
+
+  "workExperience": [
+    {
+      "_comment": "Add one object per job. List the most recent job first. keyAchievements: use \\n to separate bullet points.",
+      "company": "Company Name",
+      "position": "Your Job Title",
+      "description": "One sentence describing what the company does or what your role covered.",
+      "keyAchievements": "Achievement 1 with metric or impact.\nAchievement 2 with metric or impact.\nAchievement 3 with metric or impact.",
+      "startYear": "YYYY-MM-DD",
+      "endYear": "YYYY-MM-DD"
+    },
+    {
+      "company": "Previous Company Name",
+      "position": "Previous Job Title",
+      "description": "One sentence describing what the company does or what your role covered.",
+      "keyAchievements": "Achievement 1 with metric or impact.\nAchievement 2 with metric or impact.",
+      "startYear": "YYYY-MM-DD",
+      "endYear": "YYYY-MM-DD"
+    }
+  ],
+
+  "projects": [
+    {
+      "_comment": "Add one object per project. keyAchievements: use \\n to separate bullet points. 'link' can be a GitHub URL or live demo URL.",
+      "name": "Project Title",
+      "link": "github.com/your-username/project-repo",
+      "description": "One sentence describing what the project does and the tech stack used.",
+      "keyAchievements": "Key result or feature 1.\nKey result or feature 2.\nKey result or feature 3.",
+      "startYear": "YYYY-MM-DD",
+      "endYear": "YYYY-MM-DD"
+    },
+    {
+      "name": "Second Project Title",
+      "link": "github.com/your-username/second-project",
+      "description": "One sentence describing what the project does and the tech stack used.",
+      "keyAchievements": "Key result or feature 1.\nKey result or feature 2.",
+      "startYear": "YYYY-MM-DD",
+      "endYear": "YYYY-MM-DD"
+    }
+  ],
+
+  "skills": [
+    {
+      "_comment": "Add one object per skill category. Each 'skills' array is a flat list of keyword strings. Keep keywords short and ATS-friendly.",
+      "title": "Technical Skills",
+      "skills": [
+        "Selenium",
+        "TestNG",
+        "Rest Assured",
+        "Java",
+        "API Testing",
+        "Postman",
+        "Jenkins",
+        "Git",
+        "SQL"
+      ]
+    },
+    {
+      "title": "Domain Knowledge",
+      "skills": [
+        "ERP Systems",
+        "Insurance Domain",
+        "SDLC",
+        "Agile / Scrum"
+      ]
+    },
+    {
+      "title": "Soft Skills",
+      "skills": [
+        "Problem Solving",
+        "Communication",
+        "Team Collaboration",
+        "Attention to Detail"
+      ]
+    }
+  ],
+
+  "languages": [
+    "English",
+    "Hindi"
+  ],
+
+  "certifications": [
+    "Certification Name — Issuing Body (Year)",
+    "Another Certification — Issuing Body (Year)"
+  ]
+}

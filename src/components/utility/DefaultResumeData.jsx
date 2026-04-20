@@ -54,7 +54,24 @@ const DefaultResumeData = {
       "endYear": "2023-03-09"
     }
   ],
-  projects: [],
+  projects: [
+    {
+      name: "E-Commerce Platform Automation Suite",
+      link: "github.com/marcus-hall/ecomm-automation",
+      description: "End-to-end test automation framework for a high-traffic e-commerce platform, covering checkout, payment, and inventory modules.",
+      keyAchievements: "Built a Selenium + TestNG framework from scratch, reducing manual regression time by 70%.\nDesigned 150+ data-driven test cases using Apache POI for Excel-based test data management.\nIntegrated the suite with Jenkins CI/CD pipeline, enabling nightly automated regression runs.\nAchieved 95% code coverage across critical user flows including cart, checkout, and order tracking.",
+      startYear: "2023-06-01",
+      endYear: "2023-12-31",
+    },
+    {
+      name: "REST API Test Framework — Invoice Management",
+      link: "github.com/marcus-hall/api-test-framework",
+      description: "A modular REST API automation framework built with Rest Assured and TestNG for validating invoice generation, filtering, and CRUD operations.",
+      keyAchievements: "Implemented POJO-based response deserialization for type-safe assertions across 40+ endpoints.\nAdded JSON Schema validation to catch contract-breaking changes in API responses automatically.\nConfigured Extent Reports for rich HTML reporting with request/response logs for faster debugging.\nReduced defect escape rate by 30% by integrating the suite into the pre-deployment pipeline.",
+      startYear: "2024-01-15",
+      endYear: "2024-05-30",
+    },
+  ],
   skills: [
     {
       title: "Technical Skills",
