@@ -39,9 +39,9 @@ const Preview = () => {
         <DragDropContext onDragEnd={onDragEndHandler}>
           <Header resumeData={resumeData} icons={icons}/>
           <hr className="border-dashed my-2"/>
-          <div id="resume-cols-wrapper" className="grid grid-cols-3 gap-6">
-            <div id="resume-left-col"><LeftSide resumeData={resumeData}/></div>
-            <div id="resume-right-col" className="col-span-2"><RightSide resumeData={resumeData}/></div>
+          <div id="resume-cols-wrapper" className="grid grid-cols-5 gap-4">
+            <div id="resume-left-col" className="col-span-2"><LeftSide resumeData={resumeData}/></div>
+            <div id="resume-right-col" className="col-span-3"><RightSide resumeData={resumeData}/></div>
           </div>
         </DragDropContext>
       </A4PageWrapper>

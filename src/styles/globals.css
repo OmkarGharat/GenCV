@@ -97,17 +97,17 @@
 }
 
 .section-title{
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
 }
 
 .content{
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
 }
 
 .sub-content{
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 400;
 }
 
@@ -121,26 +121,15 @@
     }
 
     .rm-padding-print {
-        padding: 0;
+        padding: 10mm;
     }
 
     @page {
         size: A4;
-        margin: 10mm;
+        margin: 0;
     }
 
     .preview {
         overflow-y: visible !important;
-    }
-
-    .preview::after {
-        content: "Created using ZenCV (zencv.app)";
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        opacity: 0.2;
-        font-size: small;
-        text-align: center;
-        z-index: -1;
     }
 }
