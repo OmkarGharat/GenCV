@@ -5,7 +5,8 @@
 @layer base {
     
     body {
-        @apply font-[sans-serif];
+        font-family: sans-serif;
+        font-size: 14px;
     }
 
     ::-webkit-scrollbar {
@@ -77,37 +78,44 @@
 }
 
 .name{
+    font-family: sans-serif;
     font-size: 20px;
     font-weight: 700;
 }
 
 .profession{
+    font-family: sans-serif;
     font-size: 16px;
     font-weight: 500;
 }
 
 .contact{
+    font-family: sans-serif;
     font-size: 14px;
     font-weight: 400;
 }
 
 .social-media{
+    font-family: sans-serif;
     font-size: 12px;
     font-weight: 400;
 }
 
 .section-title{
-    font-size: 14px;
+    font-family: sans-serif;
+    font-size: 16px;
     font-weight: 700;
 }
 
 .content{
-    font-size: 12px;
+    font-family: sans-serif;
+    font-size: 14px;
     font-weight: 400;
 }
 
 .sub-content{
-    font-size: 10px;
+    font-family: sans-serif;
+    font-size: 12px;
     font-weight: 400;
 }
 
@@ -121,16 +129,16 @@
     }
 
     .rm-padding-print {
-        padding: 0;
+        padding: 0 !important;
     }
 
     @page {
         size: A4;
-        margin: 0;
+        margin: 0.4in;
     }
 
     .preview {
         overflow-y: visible !important;
-        padding: 10mm;
+        padding: 0 !important;
     }
 }
