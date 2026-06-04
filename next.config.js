@@ -9,6 +9,11 @@ const nextConfig = {
   // puppeteer-core and @sparticuz/chromium must run as-is in Node — bundling
   // them breaks binary resolution and causes ENOENT errors.
   serverExternalPackages: ["puppeteer-core", "@sparticuz/chromium"],
+  experimental: {
+    outputFileTracingIncludes: {
+      "/api/generate-pdf": ["./node_modules/@sparticuz/chromium/bin/**/*"],
+    },
+  },
 }
 
 module.exports = nextConfig
