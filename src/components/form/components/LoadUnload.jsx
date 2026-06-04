@@ -29,7 +29,7 @@ const LoadUnload = () => {
 
   return (
     <div className="flex flex-wrap gap-4 mb-6 justify-center bg-white p-4 rounded-2xl shadow-sm border border-gray-100 sticky top-0 z-10">
-      <label className="flex items-center gap-2 px-6 py-3 bg-white text-black border-2 border-black rounded-full cursor-pointer hover:bg-zinc-100 transition-all shadow-sm font-bold">
+      <label className="flex items-center gap-2 px-6 py-3 bg-white text-black border-2 border-black rounded-full cursor-pointer hover:bg-zinc-100 transition-all shadow-sm font-bold text-sm">
         <FaCloudUploadAlt className="text-xl" />
         <span>Load Backup</span>
         <input
@@ -46,7 +46,7 @@ const LoadUnload = () => {
 
       <button
         aria-label="Save Data"
-        className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full hover:bg-zinc-900 transition-all shadow-sm font-bold"
+        className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full hover:bg-zinc-900 transition-all shadow-sm font-bold text-sm"
         onClick={(event) => {
           handleDownload(
             resumeData,
