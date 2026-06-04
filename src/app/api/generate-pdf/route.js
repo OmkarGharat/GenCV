@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import puppeteer from "puppeteer-core";
 import { existsSync } from "fs";
+import chromium from "@sparticuz/chromium";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 async function getBrowserInstance() {
   if (process.env.NODE_ENV === "production") {
-    const chromium = require("@sparticuz/chromium");
     return puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
