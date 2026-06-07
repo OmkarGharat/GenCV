@@ -1,6 +1,7 @@
 import { FaCloudUploadAlt, FaCloudDownloadAlt } from "react-icons/fa";
 import React, { useContext } from "react";
 import {ResumeContext} from "../../builder";
+import DefaultResumeData from "../../utility/DefaultResumeData";
 
 const LoadUnload = () => {
   const { resumeData, setResumeData } = useContext(ResumeContext);
@@ -8,10 +9,29 @@ const LoadUnload = () => {
   // load backup resume data
   const handleLoad = (event) => {
     const file = event.target.files[0];
+    if (!file) return;
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const resumeData = JSON.parse(event.target.result);
-      setResumeData(resumeData);
+    reader.onload = (e) => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        // Merge with defaults so any missing array fields don't cause .map() crashes
+        const merged = {
+          ...DefaultResumeData,
+          ...parsed,
+          socialMedia: Array.isArray(parsed.socialMedia) ? parsed.socialMedia : DefaultResumeData.socialMedia,
+          education: Array.isArray(parsed.education) ? parsed.education : DefaultResumeData.education,
+          workExperience: Array.isArray(parsed.workExperience) ? parsed.workExperience : DefaultResumeData.workExperience,
+          projects: Array.isArray(parsed.projects) ? parsed.projects : DefaultResumeData.projects,
+          skills: Array.isArray(parsed.skills) ? parsed.skills : DefaultResumeData.skills,
+          languages: Array.isArray(parsed.languages) ? parsed.languages : DefaultResumeData.languages,
+          certifications: Array.isArray(parsed.certifications) ? parsed.certifications : DefaultResumeData.certifications,
+        };
+        setResumeData(merged);
+        alert("Data Successfully Loaded!");
+      } catch (err) {
+        alert("Invalid JSON file. Please upload a valid ZenCV backup.");
+        console.error("JSON parse error:", err);
+      }
     };
     reader.readAsText(file);
   };
@@ -38,7 +58,6 @@ const LoadUnload = () => {
           className="hidden"
           onChange={(e) => {
              handleLoad(e);
-             alert("Data Successfully Loaded!");
           }}
           accept=".json"
         />
