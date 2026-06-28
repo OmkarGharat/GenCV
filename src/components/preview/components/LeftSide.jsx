@@ -15,7 +15,7 @@ const Draggable = dynamic(
 
 const LeftSide = ({ resumeData }) => {
   return (
-    <div className="col-span-1 space-y-2">
+    <div className="col-span-1 space-y-1">
       {resumeData.summary.length > 0 && (
         <div className="mb-1">
           <h2 className="section-title mb-1 border-b-2 border-gray-300">
