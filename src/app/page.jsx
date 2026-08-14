@@ -17,9 +17,17 @@ const LandingPage = () => {
             </div>
             <span className="text-2xl font-black text-black tracking-tighter">ZenCV.</span>
         </div>
-        <Link href="/builder" className="text-sm font-bold text-gray-500 hover:text-black transition-colors">
-            Go to Workspace →
-        </Link>
+        <div className="flex items-center space-x-6">
+          <Link href="/hr-outreach" className="text-sm font-bold text-gray-500 hover:text-black transition-colors">
+              Recruiter Search 🔍
+          </Link>
+          <Link href="/bulk-builder" className="text-sm font-bold text-gray-500 hover:text-black transition-colors">
+              Bulk Builder ⚡
+          </Link>
+          <Link href="/builder" className="text-sm font-bold text-gray-500 hover:text-black transition-colors">
+              Go to Workspace →
+          </Link>
+        </div>
       </nav>
 
       <div className="max-w-4xl w-full flex flex-col items-center text-center space-y-8 mt-32 p-6">

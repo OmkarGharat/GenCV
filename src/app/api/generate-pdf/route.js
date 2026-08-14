@@ -6,6 +6,8 @@ import chromium from "@sparticuz/chromium";
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
+let globalBrowser = null;
+
 async function getBrowserInstance() {
   if (process.env.NODE_ENV === "production") {
     return puppeteer.launch({
@@ -16,7 +18,17 @@ async function getBrowserInstance() {
     });
   }
 
-  // Local Windows dev — find system Chrome or Edge
+  // Reuse active browser instance in dev mode
+  if (
+    globalBrowser &&
+    (typeof globalBrowser.isConnected === "function"
+      ? globalBrowser.isConnected()
+      : globalBrowser.connected)
+  ) {
+    return globalBrowser;
+  }
+
+  // Local Windows dev — prioritize Chrome and Edge over Firefox for stable CDP printToPDF support
   const candidates = [
     "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
     "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
@@ -25,24 +37,33 @@ async function getBrowserInstance() {
       : "",
     "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
     "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+    "C:\\Apps\\CR_618FA.tmp\\CHROME.PACKED\\chrome\\Chrome-bin\\sigma.exe",
+    "C:\\Users\\Omkar\\Downloads\\FirefoxPortable\\FirefoxPortable.exe",
   ].filter(Boolean);
 
   const executablePath = candidates.find((p) => existsSync(p));
   if (!executablePath) {
-    throw new Error("No Chrome or Edge found on this machine.");
+    throw new Error("No Chrome, Firefox, or Edge found on this machine.");
   }
 
-  console.log("[generate-pdf] Using browser:", executablePath);
+  console.log("[generate-pdf] Launching browser:", executablePath);
 
-  return puppeteer.launch({
+  const isFirefox = executablePath.toLowerCase().includes("firefox");
+
+  globalBrowser = await puppeteer.launch({
     executablePath,
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+    ...(isFirefox ? { product: "firefox" } : {}),
+    args: isFirefox 
+      ? [] 
+      : ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
   });
+
+  return globalBrowser;
 }
 
 export async function POST(request) {
-  let browser = null;
+  let page = null;
 
   try {
     const { html, styles } = await request.json();
@@ -71,8 +92,8 @@ export async function POST(request) {
 <body>${html}</body>
 </html>`;
 
-    browser = await getBrowserInstance();
-    const page = await browser.newPage();
+    const browser = await getBrowserInstance();
+    page = await browser.newPage();
 
     // Render at the template's natural width: 8.5in = 816px.
     // Puppeteer will then scale this down to fit A4's printable area
@@ -91,8 +112,8 @@ export async function POST(request) {
       margin: { top: "0.35in", bottom: "0.35in", left: "0.35in", right: "0.35in" },
     });
 
-    await browser.close();
-    browser = null;
+    await page.close();
+    page = null;
 
     // Return as base64 JSON — avoids binary streaming issues in Next.js 15
     // App Router which can cause ERR_CONNECTION_RESET on large binary responses.
@@ -101,8 +122,8 @@ export async function POST(request) {
     return NextResponse.json({ pdf: base64 });
 
   } catch (err) {
-    if (browser) {
-      try { await browser.close(); } catch (_) {}
+    if (page) {
+      try { await page.close(); } catch (_) {}
     }
     console.error("[generate-pdf] Error:", err.message);
     return NextResponse.json(

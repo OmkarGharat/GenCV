@@ -19,6 +19,12 @@ export default function Builder() {
   // resume data
   const [resumeData, setResumeData] = useState(DefaultResumeData);
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.loadResumeData = setResumeData;
+    }
+  }, []);
+
   // form hide/show
   const [formClose, setFormClose] = useState(false);
 
