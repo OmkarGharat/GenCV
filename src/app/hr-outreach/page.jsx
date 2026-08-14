@@ -37,10 +37,10 @@ export default function HrOutreach() {
   const filteredCompanies = useMemo(() => {
     return companiesList.filter(item => {
       const companyMatch = item.company.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       // Check if any recruiter name/title/email matches search term
-      const recruiterMatch = item.recruiters.some(r => 
-        (r.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+      const recruiterMatch = item.recruiters.some(r =>
+        (r.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (r.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
         (r.title || '').toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -129,40 +129,37 @@ LinkedIn: https://linkedin.com/in/omkargharat`;
 
       {/* Main Content Grid */}
       <div className="max-w-6xl w-full px-6 pb-20 grid grid-cols-1 lg:grid-cols-4 gap-8">
-        
+
         {/* Sidebar Filters */}
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Database Filter</h3>
-            
+
             <div className="flex flex-col space-y-2">
               <button
                 onClick={() => { setFilterType('all'); setLimit(30); }}
-                className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                  filterType === 'all' 
-                    ? 'bg-zinc-900 text-white shadow-md' 
+                className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filterType === 'all'
+                    ? 'bg-zinc-900 text-white shadow-md'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 All Companies ({companiesList.length})
               </button>
               <button
                 onClick={() => { setFilterType('has_email'); setLimit(30); }}
-                className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                  filterType === 'has_email' 
-                    ? 'bg-zinc-900 text-white shadow-md' 
+                className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filterType === 'has_email'
+                    ? 'bg-zinc-900 text-white shadow-md'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 Verified HR Emails
               </button>
               <button
                 onClick={() => { setFilterType('has_commute'); setLimit(30); }}
-                className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                  filterType === 'has_commute' 
-                    ? 'bg-zinc-900 text-white shadow-md' 
+                className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filterType === 'has_commute'
+                    ? 'bg-zinc-900 text-white shadow-md'
                     : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 Target Commute Details
               </button>
@@ -191,8 +188,8 @@ LinkedIn: https://linkedin.com/in/omkargharat`;
               suppressHydrationWarning
             />
             {searchTerm && (
-              <button 
-                onClick={() => setSearchTerm('')} 
+              <button
+                onClick={() => setSearchTerm('')}
                 className="text-xs font-semibold text-gray-400 hover:text-black mr-2 bg-gray-100 px-2 py-1 rounded"
               >
                 Clear
@@ -216,7 +213,7 @@ LinkedIn: https://linkedin.com/in/omkargharat`;
           <div className="space-y-4">
             {displayedCompanies.map((item) => (
               <div key={item.company} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4 hover:border-zinc-300 transition-colors">
-                
+
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-gray-100 gap-2">
                   <div>
@@ -245,7 +242,7 @@ LinkedIn: https://linkedin.com/in/omkargharat`;
                           <div>
                             <h4 className="font-bold text-gray-900 text-sm">{r.name}</h4>
                             <p className="text-gray-500 text-xs font-semibold">{r.title}</p>
-                            
+
                             {r.email && (
                               <div className="mt-2 flex items-center justify-between text-xs text-gray-600 bg-white p-2 rounded-lg border border-gray-100">
                                 <span className="truncate mr-2">{r.email}</span>

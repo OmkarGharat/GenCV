@@ -318,32 +318,7 @@ export default function BulkBuilder() {
     if (completedCount > 0) {
       try {
         const content = await zip.generateAsync({ type: "blob" });
-        
-        let savedViaPicker = false;
-        if (typeof window !== 'undefined' && 'showSaveFilePicker' in window) {
-          try {
-            const handle = await window.showSaveFilePicker({
-              suggestedName: "Omkar_Gharat_Resumes.zip",
-              startIn: 'downloads',
-              types: [{
-                description: 'ZIP Archive',
-                accept: { 'application/zip': ['.zip'] }
-              }]
-            });
-            const writable = await handle.createWritable();
-            await writable.write(content);
-            await writable.close();
-            savedViaPicker = true;
-          } catch (pickerErr) {
-            if (pickerErr.name === 'AbortError') {
-              savedViaPicker = true; // User cancelled save prompt intentionally
-            }
-          }
-        }
-
-        if (!savedViaPicker) {
-          saveAs(content, "Omkar_Gharat_Resumes.zip");
-        }
+        saveAs(content, "Omkar_Gharat_Resumes.zip");
       } catch (zipErr) {
         alert("Failed to build ZIP file: " + zipErr.message);
       }
