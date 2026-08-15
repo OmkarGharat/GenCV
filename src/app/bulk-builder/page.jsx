@@ -391,7 +391,7 @@ export default function BulkBuilder() {
               Private Contact Details
             </h2>
             <p className="text-xs text-gray-500 mb-5 leading-relaxed">
-              These details are merged in-memory and cached in your browser's localStorage. They are never transmitted or stored on any server.
+              These details are merged in-memory and cached in your browser&apos;s localStorage. They are never transmitted or stored on any server.
             </p>
             <div className="space-y-4">
               <div>
