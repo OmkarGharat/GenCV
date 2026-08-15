@@ -103,7 +103,7 @@ export default function BulkBuilder() {
   const handleFileChange = (e) => {
     if (!e.target.files) return;
     const selectedFiles = Array.from(e.target.files);
-    
+
     const filePromises = selectedFiles.map(file => {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -143,7 +143,7 @@ export default function BulkBuilder() {
   const handleDrop = (e) => {
     e.preventDefault();
     if (!e.dataTransfer.files) return;
-    
+
     const selectedFiles = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.json'));
     const filePromises = selectedFiles.map(file => {
       return new Promise((resolve) => {
@@ -222,7 +222,7 @@ export default function BulkBuilder() {
 
     saveContactToLocalStorage();
     setIsCompiling(true);
-    
+
     const zip = new JSZipRef.current();
 
     let completedCount = 0;
@@ -254,7 +254,7 @@ export default function BulkBuilder() {
         if (!previewEl) {
           throw new Error("Preview wrapper (#preview-section) not found in DOM");
         }
-        
+
         const html = previewEl.innerHTML;
         const styleTags = Array.from(document.querySelectorAll("style"))
           .map((s) => `<style>${s.innerHTML}</style>`)
@@ -268,7 +268,7 @@ export default function BulkBuilder() {
         let response;
         let data;
         let attempts = 0;
-        
+
         while (attempts < 2) {
           try {
             attempts++;
@@ -338,7 +338,7 @@ export default function BulkBuilder() {
     <div className="min-h-screen bg-gray-50 text-gray-800 flex flex-col font-sans selection:bg-zinc-800 selection:text-white" suppressHydrationWarning>
       {/* Invisible render area for extracting resume HTML */}
       <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '816px', visibility: 'hidden', overflow: 'hidden' }}>
-        <ResumeContext.Provider value={{ resumeData: activeResumeData, setResumeData: () => {} }}>
+        <ResumeContext.Provider value={{ resumeData: activeResumeData, setResumeData: () => { } }}>
           <Preview />
         </ResumeContext.Provider>
       </div>
@@ -348,9 +348,9 @@ export default function BulkBuilder() {
         <div className="flex items-center space-x-3">
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-              <span className="text-white font-black text-lg">Z</span>
+              <span className="text-white font-black text-lg">G</span>
             </div>
-            <span className="text-xl font-black text-black tracking-tighter">ZenCV.</span>
+            <span className="text-xl font-black text-black tracking-tighter">GenCV.</span>
           </Link>
           <span className="text-gray-300">|</span>
           <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider bg-zinc-100 px-2 py-1 rounded">Bulk Engine</span>
@@ -380,10 +380,10 @@ export default function BulkBuilder() {
 
       {/* Main Grid Layout */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 pb-20 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* Left Side: Contact Form and Upload Zone (5 Cols) */}
         <div className="lg:col-span-5 flex flex-col space-y-6">
-          
+
           {/* Credentials Box */}
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
             <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4 flex items-center">
@@ -447,7 +447,7 @@ export default function BulkBuilder() {
 
         {/* Right Side: Selected Files List and Actions (7 Cols) */}
         <div className="lg:col-span-7 flex flex-col space-y-6">
-          
+
           {/* Queue Box */}
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col min-h-[400px]">
             <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
@@ -500,21 +500,19 @@ export default function BulkBuilder() {
               /* Files Table / Scroll Container */
               <div className="flex-1 overflow-y-auto max-h-[350px] pr-2 space-y-3">
                 {files.map((file, idx) => (
-                  <div 
+                  <div
                     key={idx}
-                    className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${
-                      idx === currentFileIndex 
-                        ? 'bg-zinc-50 border-zinc-400 shadow-sm' 
-                        : 'bg-white border-gray-100 hover:border-gray-200'
-                    }`}
+                    className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${idx === currentFileIndex
+                      ? 'bg-zinc-50 border-zinc-400 shadow-sm'
+                      : 'bg-white border-gray-100 hover:border-gray-200'
+                      }`}
                   >
                     <div className="flex items-center space-x-3 overflow-hidden">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
-                        file.status === 'completed' ? 'bg-emerald-50 text-emerald-800 border border-emerald-100' :
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${file.status === 'completed' ? 'bg-emerald-50 text-emerald-800 border border-emerald-100' :
                         file.status === 'failed' ? 'bg-red-50 text-red-800 border border-red-100' :
-                        file.status === 'compiling' ? 'bg-amber-50 text-amber-800 border border-amber-100 animate-pulse' :
-                        'bg-zinc-50 text-zinc-600 border border-zinc-100'
-                      }`}>
+                          file.status === 'compiling' ? 'bg-amber-50 text-amber-800 border border-amber-100 animate-pulse' :
+                            'bg-zinc-50 text-zinc-600 border border-zinc-100'
+                        }`}>
                         {file.status === 'completed' ? '✓' : file.status === 'failed' ? '✗' : idx + 1}
                       </div>
                       <div className="overflow-hidden">

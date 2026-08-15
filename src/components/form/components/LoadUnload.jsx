@@ -1,6 +1,6 @@
 import { FaCloudUploadAlt, FaCloudDownloadAlt } from "react-icons/fa";
 import React, { useContext } from "react";
-import {ResumeContext} from "../../builder";
+import { ResumeContext } from "../../builder";
 import DefaultResumeData from "../../utility/DefaultResumeData";
 
 const LoadUnload = () => {
@@ -29,7 +29,7 @@ const LoadUnload = () => {
         setResumeData(merged);
         alert("Data Successfully Loaded!");
       } catch (err) {
-        alert("Invalid JSON file. Please upload a valid ZenCV backup.");
+        alert("Invalid JSON file. Please upload a valid GenCV backup.");
         console.error("JSON parse error:", err);
       }
     };
@@ -57,7 +57,7 @@ const LoadUnload = () => {
           type="file"
           className="hidden"
           onChange={(e) => {
-             handleLoad(e);
+            handleLoad(e);
           }}
           accept=".json"
         />
@@ -69,7 +69,7 @@ const LoadUnload = () => {
         onClick={(event) => {
           handleDownload(
             resumeData,
-            resumeData.name + " by ZenCV.json",
+            resumeData.name + " by GenCV.json",
             event
           );
         }}

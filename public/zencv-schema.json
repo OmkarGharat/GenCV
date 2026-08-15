@@ -1,13 +1,11 @@
 {
-  "_instructions": "Fill in all fields below with real resume data. Remove any field you don't have data for (leave it as an empty string or empty array). Dates must be in YYYY-MM-DD format. The 'keyAchievements' field in both workExperience and projects must be a single string with each bullet point separated by a newline character (\\n). Do NOT add any extra keys. When done, load this file into ZenCV using the 'Load Backup' button.",
-
+  "_instructions": "Fill in all fields below with real resume data. Remove any field you don't have data for (leave it as an empty string or empty array). Dates must be in YYYY-MM-DD format. The 'keyAchievements' field in both workExperience and projects must be a single string with each bullet point separated by a newline character (\\n). Do NOT add any extra keys. When done, load this file into GenCV using the 'Load Backup' button.",
   "name": "FULL NAME IN UPPERCASE",
   "position": "Your Target Job Title (e.g. Automation Test Engineer)",
   "contactInformation": "+91-XXXXXXXXXX",
   "email": "your.email@example.com",
   "address": "City, State / Country",
   "profilePicture": "",
-
   "socialMedia": [
     {
       "_comment": "Supported labels: Github, LinkedIn, Website, Twitter, Portfolio — add/remove objects as needed",
@@ -23,9 +21,7 @@
       "link": "your-portfolio.com"
     }
   ],
-
   "summary": "2-4 sentence professional summary. Focus on your years of experience, core skills, domain expertise, and what value you bring to the role. Keep it ATS-friendly by including relevant keywords.",
-
   "education": [
     {
       "_comment": "Add one object per degree. 'school' = degree name, 'degree' = institution name.",
@@ -35,7 +31,6 @@
       "endYear": "YYYY-MM-DD"
     }
   ],
-
   "workExperience": [
     {
       "_comment": "Add one object per job. List the most recent job first. keyAchievements: use \\n to separate bullet points.",
@@ -55,7 +50,6 @@
       "endYear": "YYYY-MM-DD"
     }
   ],
-
   "projects": [
     {
       "_comment": "Add one object per project. keyAchievements: use \\n to separate bullet points. 'link' can be a GitHub URL or live demo URL.",
@@ -75,7 +69,6 @@
       "endYear": "YYYY-MM-DD"
     }
   ],
-
   "skills": [
     {
       "_comment": "Add one object per skill category. Each 'skills' array is a flat list of keyword strings. Keep keywords short and ATS-friendly.",
@@ -111,12 +104,10 @@
       ]
     }
   ],
-
   "languages": [
     "English",
     "Hindi"
   ],
-
   "certifications": [
     "Certification Name — Issuing Body (Year)",
     "Another Certification — Issuing Body (Year)"

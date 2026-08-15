@@ -102,7 +102,7 @@ export default function AtsChecker() {
   const handleFileUpload = (e) => {
     if (!e.target.files) return;
     const filesArr = Array.from(e.target.files);
-    
+
     const promises = filesArr.map(file => {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -157,7 +157,7 @@ export default function AtsChecker() {
   // Live JD Matcher Calculation
   const calculateJdMatch = () => {
     if (!jdText.trim() || !resumes[selectedResumeIdx] || !resumes[selectedResumeIdx].data) return null;
-    
+
     const currentResume = resumes[selectedResumeIdx].data;
     const allText = [
       currentResume.name, currentResume.position, currentResume.summary,
@@ -170,7 +170,7 @@ export default function AtsChecker() {
 
     // Extract common tech keywords from JD
     const techGlossary = ['java', 'selenium', 'cucumber', 'bdd', 'testng', 'rest assured', 'postman', 'api', 'sql', 'jira', 'git', 'maven', 'cypress', 'playwright', 'appium', 'python', 'pytest', 'uat', 'regression', 'agile', 'scrum', 'jenkins', 'ci/cd', 'devops'];
-    
+
     const jdKeywords = techGlossary.filter(kw => cleanedJd.includes(kw));
     const matched = jdKeywords.filter(kw => cleanedResume.includes(kw));
     const missing = jdKeywords.filter(kw => !cleanedResume.includes(kw));
@@ -195,9 +195,9 @@ export default function AtsChecker() {
         <div className="flex items-center space-x-3">
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-              <span className="text-white font-black text-lg">Z</span>
+              <span className="text-white font-black text-lg">G</span>
             </div>
-            <span className="text-xl font-black text-black tracking-tighter">ZenCV.</span>
+            <span className="text-xl font-black text-black tracking-tighter">GenCV.</span>
           </Link>
           <span className="text-gray-300">|</span>
           <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider bg-zinc-100 px-2 py-1 rounded">ATS Checker UI</span>
@@ -231,17 +231,15 @@ export default function AtsChecker() {
           <div className="flex items-center bg-gray-200/80 p-1 rounded-xl shrink-0">
             <button
               onClick={() => setActiveTab('batch')}
-              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
-                activeTab === 'batch' ? 'bg-white text-black shadow-sm' : 'text-gray-600 hover:text-black'
-              }`}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === 'batch' ? 'bg-white text-black shadow-sm' : 'text-gray-600 hover:text-black'
+                }`}
             >
               Mode A: Batch Resume Scorer ({resumes.length})
             </button>
             <button
               onClick={() => setActiveTab('matcher')}
-              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${
-                activeTab === 'matcher' ? 'bg-white text-black shadow-sm' : 'text-gray-600 hover:text-black'
-              }`}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === 'matcher' ? 'bg-white text-black shadow-sm' : 'text-gray-600 hover:text-black'
+                }`}
             >
               Mode B: Live JD Matcher
             </button>
@@ -251,7 +249,7 @@ export default function AtsChecker() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 pb-20 mt-4">
-        
+
         {/* Mode A: Batch Resume Scorer */}
         {activeTab === 'batch' && (
           <div className="space-y-6">
@@ -291,9 +289,8 @@ export default function AtsChecker() {
                   {resumes.map((res, idx) => (
                     <div
                       key={idx}
-                      className={`bg-white border rounded-2xl p-5 shadow-sm space-y-4 transition-all ${
-                        res.status === 'error' ? 'border-red-200 bg-red-50/30' : 'border-gray-200'
-                      }`}
+                      className={`bg-white border rounded-2xl p-5 shadow-sm space-y-4 transition-all ${res.status === 'error' ? 'border-red-200 bg-red-50/30' : 'border-gray-200'
+                        }`}
                     >
                       <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                         <div className="overflow-hidden">
@@ -301,11 +298,10 @@ export default function AtsChecker() {
                           <p className="text-xs text-gray-500">{res.totalWords} words (Target: 350 - 550)</p>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <div className={`px-3 py-1 rounded-xl text-xs font-black ${
-                            res.score >= 95 ? 'bg-emerald-100 text-emerald-800' :
+                          <div className={`px-3 py-1 rounded-xl text-xs font-black ${res.score >= 95 ? 'bg-emerald-100 text-emerald-800' :
                             res.score >= 80 ? 'bg-amber-100 text-amber-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
+                              'bg-red-100 text-red-800'
+                            }`}>
                             {res.score}/100
                           </div>
                           {res.status === 'error' && (
@@ -377,7 +373,7 @@ export default function AtsChecker() {
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-5">
                 <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Select Resume to Compare</h2>
-                
+
                 {resumes.length === 0 ? (
                   <p className="text-xs text-gray-500">Please upload at least one JSON resume in Mode A first.</p>
                 ) : (
@@ -396,11 +392,10 @@ export default function AtsChecker() {
                   <div className="space-y-4 border-t border-gray-100 pt-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">JD Match Score</span>
-                      <span className={`text-xl font-black ${
-                        jdMatchResult.matchPct >= 80 ? 'text-emerald-600' :
+                      <span className={`text-xl font-black ${jdMatchResult.matchPct >= 80 ? 'text-emerald-600' :
                         jdMatchResult.matchPct >= 60 ? 'text-amber-600' :
-                        'text-red-600'
-                      }`}>
+                          'text-red-600'
+                        }`}>
                         {jdMatchResult.matchPct}%
                       </span>
                     </div>

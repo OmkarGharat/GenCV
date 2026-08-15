@@ -1,10 +1,10 @@
-# ZenCV
+# GenCV
 
-A cutting-edge resume builder that helps job seekers create a professional, beautiful resume in minutes. Our platform uses the latest technology to analyze and optimize your resume for maximum visibility and success. Say goodbye to frustration and wasted time spent on manual resume formatting. Create your winning resume with ZenCV today and get noticed by employers.
+A cutting-edge resume builder that helps job seekers create a professional, beautiful resume in minutes. Our platform uses the latest technology to analyze and optimize your resume for maximum visibility and success. Say goodbye to frustration and wasted time spent on manual resume formatting. Create your winning resume with GenCV today and get noticed by employers.
 
 ## Demo
 
-#### [ZenCV App](https://zencv.app/)
+#### [GenCV App](https://GenCV.app/)
 ![image](https://user-images.githubusercontent.com/61316762/218017511-fbbaa7da-6154-449f-9e46-8de45b0e6c29.png)
 
 ### Resume Score

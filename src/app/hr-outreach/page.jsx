@@ -100,9 +100,9 @@ LinkedIn: https://linkedin.com/in/omkargharat`;
         <div className="flex items-center space-x-3">
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-              <span className="text-white font-black text-lg">Z</span>
+              <span className="text-white font-black text-lg">G</span>
             </div>
-            <span className="text-xl font-black text-black tracking-tighter">ZenCV.</span>
+            <span className="text-xl font-black text-black tracking-tighter">GenCV.</span>
           </Link>
           <span className="text-gray-300">|</span>
           <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider bg-zinc-100 px-2 py-1 rounded">Outreach Hub</span>
@@ -139,8 +139,8 @@ LinkedIn: https://linkedin.com/in/omkargharat`;
               <button
                 onClick={() => { setFilterType('all'); setLimit(30); }}
                 className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filterType === 'all'
-                    ? 'bg-zinc-900 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-zinc-900 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
                   }`}
               >
                 All Companies ({companiesList.length})
@@ -148,8 +148,8 @@ LinkedIn: https://linkedin.com/in/omkargharat`;
               <button
                 onClick={() => { setFilterType('has_email'); setLimit(30); }}
                 className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filterType === 'has_email'
-                    ? 'bg-zinc-900 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-zinc-900 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
                   }`}
               >
                 Verified HR Emails
@@ -157,8 +157,8 @@ LinkedIn: https://linkedin.com/in/omkargharat`;
               <button
                 onClick={() => { setFilterType('has_commute'); setLimit(30); }}
                 className={`text-left px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filterType === 'has_commute'
-                    ? 'bg-zinc-900 text-white shadow-md'
-                    : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-zinc-900 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
                   }`}
               >
                 Target Commute Details

@@ -49,7 +49,7 @@ export default function Hero() {
                             Resume.
                         </h1>
                         <p className="text-gray-600 mb-4">
-                            ZenCV is an innovative resume builder that helps job seekers create a professional and optimized resume. Our platform uses cutting-edge technology to analyze and optimize your resume for maximum visibility and success. Say goodbye to manual formatting frustration and wasted time, and Create your winning resume with ZenCV today and get noticed by employers.
+                            GenCV is an innovative resume builder that helps job seekers create a professional and optimized resume. Our platform uses cutting-edge technology to analyze and optimize your resume for maximum visibility and success. Say goodbye to manual formatting frustration and wasted time, and Create your winning resume with GenCV today and get noticed by employers.
                         </p>
                         <Link href="/builder" className="inline-block bg-zinc-900 text-black px-6 py-3 rounded-lg font-bold text-lg hover:bg-black transition duration-200 hover:-translate-y-1 transform hover:shadow-lg">
                             Make My Resume
