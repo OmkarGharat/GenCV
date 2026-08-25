@@ -238,67 +238,18 @@ export default function BulkBuilder() {
     saveContactToLocalStorage();
     setIsCompiling(true);
 
-    // Initialise (or reuse) the persistent zip so Download Ready works at any time
-    if (!zipRef.current) {
-      zipRef.current = new JSZipRef.current();
-    }
+    // Fresh zip for every new run so we don't mix old and new PDFs.
+    // The persistent zipRef lets "Download Ready" work mid-run.
+    zipRef.current = new JSZipRef.current();
+    setReadyCount(0);
 
-    // ── PHASE 1: Render each pending file's HTML in the DOM ─────────────────
-    // We still do this one-by-one because the Preview component needs to
-    // paint into the hidden DOM node for each file before we can grab innerHTML.
-    const renderedItems = []; // [{ index, html, styles, folder, name }]
+    let totalCompleted = 0;
 
-    for (let i = 0; i < listToProcess.length; i++) {
-      if (listToProcess[i].status !== 'pending') continue;
-
-      setCurrentFileIndex(i);
-      setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'compiling' } : f));
-
-      try {
-        // 1. Merge contact credentials into resume data
-        const mergedData = {
-          ...SAFE_DEFAULTS,
-          ...listToProcess[i].data,
-          email: email,
-          contactInformation: phone
-        };
-
-        // 2. Render into the hidden Preview node
-        setActiveResumeData(mergedData);
-
-        // 3. Wait for React render + CSS paint
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        // 4. Capture rendered HTML
-        const previewEl = document.getElementById("preview-section");
-        if (!previewEl) throw new Error("Preview wrapper (#preview-section) not found in DOM");
-
-        const html = previewEl.innerHTML;
-        const styleTags = Array.from(document.querySelectorAll("style"))
-          .map((s) => `<style>${s.innerHTML}</style>`)
-          .join("\n");
-        const linkTags = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
-          .map((l) => `<link rel="stylesheet" href="${l.href}" />`)
-          .join("\n");
-        const styles = `${linkTags}\n${styleTags}`;
-
-        renderedItems.push({ index: i, html, styles, folder: listToProcess[i].folder, name: listToProcess[i].name });
-      } catch (err) {
-        console.error("Render error on file:", listToProcess[i].name, err);
-        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'failed', error: 'Render failed: ' + err.message } : f));
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-
-    // ── PHASE 2: Send rendered HTMLs to the API in batches of BATCH_SIZE ────
-    // One Chromium launch per batch → no /tmp exhaustion.
-    let completedCount = 0;
-
-    for (let batchStart = 0; batchStart < renderedItems.length; batchStart += BATCH_SIZE) {
-      const batchItems = renderedItems.slice(batchStart, batchStart + BATCH_SIZE);
-
-      // Build the batch payload
+    // ── dispatchBatch ─────────────────────────────────────────────────────────
+    // Sends one batch of pre-rendered HTMLs to the API, decodes results, and
+    // updates file statuses. Returns a Promise — callers can await or let it run
+    // concurrently with further DOM rendering.
+    const dispatchBatch = async (batchItems) => {
       const batchPayload = batchItems.map(item => ({
         html: item.html,
         styles: item.styles,
@@ -308,7 +259,6 @@ export default function BulkBuilder() {
       let batchResults = null;
       let attempts = 0;
 
-      // Auto-retry the batch once on network failure
       while (attempts < 2) {
         try {
           attempts++;
@@ -322,33 +272,29 @@ export default function BulkBuilder() {
             batchResults = data.results;
             break;
           }
-          // Server returned a top-level error (e.g. browser failed to launch)
           throw new Error(data?.details || data?.error || `Batch failed (HTTP ${response.status})`);
         } catch (fetchErr) {
           if (attempts >= 2) {
-            // Mark all items in this batch as failed
             for (const item of batchItems) {
               setFiles(prev => prev.map((f, idx) => idx === item.index
-                ? { ...f, status: 'failed', error: 'Batch network error: ' + fetchErr.message }
+                ? { ...f, status: 'failed', error: 'Batch error: ' + fetchErr.message }
                 : f
               ));
             }
-          } else {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            return; // nothing more to do for this batch
           }
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
 
-      if (!batchResults) continue;
+      if (!batchResults) return;
 
-      // Process individual results from the batch response
       for (let b = 0; b < batchItems.length; b++) {
         const item = batchItems[b];
         const result = batchResults[b];
 
         if (!result || result.error) {
           const errMsg = result?.error || 'Unknown server error';
-          console.error("PDF error on file:", item.name, errMsg);
           setFiles(prev => prev.map((f, idx) => idx === item.index
             ? { ...f, status: 'failed', error: errMsg }
             : f
@@ -357,35 +303,91 @@ export default function BulkBuilder() {
         }
 
         try {
-          // Decode PDF base64 → Uint8Array → Blob → add to persistent ZIP
           const byteCharacters = atob(result.pdf);
           const byteNumbers = new Uint8Array(byteCharacters.length);
           for (let j = 0; j < byteCharacters.length; j++) {
             byteNumbers[j] = byteCharacters.charCodeAt(j);
           }
           const blob = new Blob([byteNumbers], { type: "application/pdf" });
-
           const folder = zipRef.current.folder(item.folder);
           folder.file("Omkar_Gharat_resume.pdf", blob);
 
           setFiles(prev => prev.map((f, idx) => idx === item.index ? { ...f, status: 'completed' } : f));
           setReadyCount(prev => prev + 1);
-          completedCount++;
+          totalCompleted++;
         } catch (decodeErr) {
-          console.error("PDF decode error:", item.name, decodeErr);
           setFiles(prev => prev.map((f, idx) => idx === item.index
             ? { ...f, status: 'failed', error: 'PDF decode failed: ' + decodeErr.message }
             : f
           ));
         }
       }
+    };
 
-      // Small breathing room between batches
-      await new Promise(resolve => setTimeout(resolve, 300));
+    // ── PIPELINE: render DOM one-by-one; fire API batch the moment it's full ──
+    // On Vercel each batch runs in its own isolated Lambda with its own /tmp,
+    // so concurrent batches are safe — no shared /tmp exhaustion.
+    const allBatchPromises = [];
+    let currentBatch = [];
+
+    for (let i = 0; i < listToProcess.length; i++) {
+      if (listToProcess[i].status !== 'pending') continue;
+
+      setCurrentFileIndex(i);
+      setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'compiling' } : f));
+
+      try {
+        const mergedData = {
+          ...SAFE_DEFAULTS,
+          ...listToProcess[i].data,
+          email,
+          contactInformation: phone,
+        };
+
+        setActiveResumeData(mergedData);
+
+        // Wait for React to paint the hidden Preview node.
+        // 600ms is enough for typical resume templates; the previous 800ms
+        // + 100ms inter-file pause was adding ~57s of dead time for 63 files.
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        const previewEl = document.getElementById("preview-section");
+        if (!previewEl) throw new Error("Preview wrapper (#preview-section) not found in DOM");
+
+        const html = previewEl.innerHTML;
+        const styleTags = Array.from(document.querySelectorAll("style"))
+          .map(s => `<style>${s.innerHTML}</style>`).join("\n");
+        const linkTags = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+          .map(l => `<link rel="stylesheet" href="${l.href}" />`).join("\n");
+        const styles = `${linkTags}\n${styleTags}`;
+
+        currentBatch.push({ index: i, html, styles, folder: listToProcess[i].folder, name: listToProcess[i].name });
+      } catch (err) {
+        console.error("Render error:", listToProcess[i].name, err);
+        setFiles(prev => prev.map((f, idx) => idx === i
+          ? { ...f, status: 'failed', error: 'Render failed: ' + err.message }
+          : f
+        ));
+      }
+
+      // Fire the API call the moment we have a full batch — don't wait for it.
+      // This overlaps network time with continued DOM rendering.
+      if (currentBatch.length >= BATCH_SIZE) {
+        allBatchPromises.push(dispatchBatch([...currentBatch]));
+        currentBatch = [];
+      }
     }
 
-    // ── PHASE 3: Auto-download the full ZIP when everything is done ──────────
-    if (completedCount > 0) {
+    // Flush any remaining files (last partial batch)
+    if (currentBatch.length > 0) {
+      allBatchPromises.push(dispatchBatch([...currentBatch]));
+    }
+
+    // Wait for ALL concurrent batch API calls to complete before downloading
+    await Promise.all(allBatchPromises);
+
+    // Auto-download full ZIP
+    if (totalCompleted > 0) {
       try {
         const content = await zipRef.current.generateAsync({ type: "blob" });
         saveAs(content, "Omkar_Gharat_Resumes.zip");
