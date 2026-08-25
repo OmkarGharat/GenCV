@@ -10,6 +10,8 @@ let globalBrowser = null;
 
 async function getBrowserInstance() {
   if (process.env.NODE_ENV === "production") {
+    // In production (Vercel), always launch fresh — stateless Lambda.
+    // Caller is responsible for closing this browser when done.
     return puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
@@ -54,24 +56,16 @@ async function getBrowserInstance() {
     executablePath,
     headless: true,
     ...(isFirefox ? { product: "firefox" } : {}),
-    args: isFirefox 
-      ? [] 
+    args: isFirefox
+      ? []
       : ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
   });
 
   return globalBrowser;
 }
 
-export async function POST(request) {
-  let page = null;
-
-  try {
-    const { html, styles } = await request.json();
-    if (!html) {
-      return NextResponse.json({ error: "Missing html" }, { status: 400 });
-    }
-
-    const fullHtml = `<!DOCTYPE html>
+function buildFullHtml(html, styles) {
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -91,44 +85,95 @@ export async function POST(request) {
 </head>
 <body>${html}</body>
 </html>`;
+}
 
-    const browser = await getBrowserInstance();
-    page = await browser.newPage();
-
-    // Render at the template's natural width: 8.5in = 816px.
-    // Puppeteer will then scale this down to fit A4's printable area
-    // (A4 width minus 0.4in margins on each side) — exactly what Chrome
-    // does in its print dialog. This preserves font sizes and proportions.
+async function generatePdfFromPage(browser, html, styles) {
+  const page = await browser.newPage();
+  try {
     await page.setViewport({ width: 816, height: 1056, deviceScaleFactor: 1 });
-
-    await page.setContent(fullHtml, { waitUntil: "networkidle0" });
-
+    await page.setContent(buildFullHtml(html, styles), { waitUntil: "networkidle0" });
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
       displayHeaderFooter: false,
-      // 0.35in margin setting.
-      // Puppeteer scales viewport content to fit within these margins.
       margin: { top: "0.35in", bottom: "0.35in", left: "0.35in", right: "0.35in" },
     });
-
+    return { pdf: Buffer.from(pdfBuffer).toString("base64"), error: null };
+  } finally {
     await page.close();
-    page = null;
+  }
+}
 
-    // Return as base64 JSON — avoids binary streaming issues in Next.js 15
-    // App Router which can cause ERR_CONNECTION_RESET on large binary responses.
-    const base64 = Buffer.from(pdfBuffer).toString("base64");
+export async function POST(request) {
+  const body = await request.json();
 
-    return NextResponse.json({ pdf: base64 });
+  // ─── BATCH MODE ───────────────────────────────────────────────────────────
+  // Payload: { batch: [{ html, styles, fileName }, ...] }
+  // Returns: { results: [{ fileName, pdf (base64) | error }, ...] }
+  if (body.batch && Array.isArray(body.batch)) {
+    const { batch } = body;
+    const isProduction = process.env.NODE_ENV === "production";
+    let browser = null;
 
-  } catch (err) {
-    if (page) {
-      try { await page.close(); } catch (_) {}
+    try {
+      browser = await getBrowserInstance();
+      const results = [];
+
+      for (const item of batch) {
+        if (!item.html) {
+          results.push({ fileName: item.fileName, error: "Missing html" });
+          continue;
+        }
+        try {
+          const { pdf } = await generatePdfFromPage(browser, item.html, item.styles);
+          results.push({ fileName: item.fileName, pdf, error: null });
+        } catch (err) {
+          console.error("[generate-pdf] Batch item error:", item.fileName, err.message);
+          results.push({ fileName: item.fileName, error: err.message });
+        }
+      }
+
+      return NextResponse.json({ results });
+    } catch (err) {
+      console.error("[generate-pdf] Batch browser error:", err.message);
+      return NextResponse.json(
+        { error: "Browser launch failed", details: err.message },
+        { status: 500 }
+      );
+    } finally {
+      // In production: always close the browser to free /tmp resources.
+      // In dev: keep the globalBrowser alive for reuse.
+      if (isProduction && browser) {
+        try { await browser.close(); } catch (_) {}
+      }
     }
+  }
+
+  // ─── SINGLE MODE (backward compat — used by the single-resume builder) ────
+  // Payload: { html, styles }
+  // Returns: { pdf (base64) }
+  const { html, styles } = body;
+  if (!html) {
+    return NextResponse.json({ error: "Missing html" }, { status: 400 });
+  }
+
+  const isProduction = process.env.NODE_ENV === "production";
+  let browser = null;
+  let page = null;
+
+  try {
+    browser = await getBrowserInstance();
+    const { pdf } = await generatePdfFromPage(browser, html, styles);
+    return NextResponse.json({ pdf });
+  } catch (err) {
     console.error("[generate-pdf] Error:", err.message);
     return NextResponse.json(
       { error: "PDF generation failed", details: err.message },
       { status: 500 }
     );
+  } finally {
+    if (isProduction && browser) {
+      try { await browser.close(); } catch (_) {}
+    }
   }
 }

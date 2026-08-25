@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { saveAs } from 'file-saver';
 import dynamic from 'next/dynamic';
@@ -82,7 +82,9 @@ export default function BulkBuilder() {
   const [currentFileIndex, setCurrentFileIndex] = useState(-1);
   const [activeResumeData, setActiveResumeData] = useState(SAFE_DEFAULTS);
   const [zipLibLoaded, setZipLibLoaded] = useState(false);
+  const [readyCount, setReadyCount] = useState(0); // tracks # of completed PDFs in zipRef
   const JSZipRef = useRef(null);
+  const zipRef = useRef(null); // persistent ZIP object — survives re-renders
 
   // Load JSZip dynamically to prevent next.js SSR failures
   useEffect(() => {
@@ -204,6 +206,19 @@ export default function BulkBuilder() {
     runBulkGeneration(nextFiles);
   };
 
+  // Download all PDFs that are already in zipRef (i.e. successfully generated)
+  const downloadReady = useCallback(async () => {
+    if (!zipRef.current) return;
+    try {
+      const content = await zipRef.current.generateAsync({ type: 'blob' });
+      saveAs(content, 'Omkar_Gharat_Resumes_Ready.zip');
+    } catch (err) {
+      alert('Failed to generate ZIP: ' + err.message);
+    }
+  }, []);
+
+  const BATCH_SIZE = 10;
+
   const runBulkGeneration = async (overrideFiles = null) => {
     const listToProcess = overrideFiles || files;
 
@@ -223,11 +238,16 @@ export default function BulkBuilder() {
     saveContactToLocalStorage();
     setIsCompiling(true);
 
-    const zip = new JSZipRef.current();
+    // Initialise (or reuse) the persistent zip so Download Ready works at any time
+    if (!zipRef.current) {
+      zipRef.current = new JSZipRef.current();
+    }
 
-    let completedCount = 0;
+    // ── PHASE 1: Render each pending file's HTML in the DOM ─────────────────
+    // We still do this one-by-one because the Preview component needs to
+    // paint into the hidden DOM node for each file before we can grab innerHTML.
+    const renderedItems = []; // [{ index, html, styles, folder, name }]
 
-    // Iterate through files
     for (let i = 0; i < listToProcess.length; i++) {
       if (listToProcess[i].status !== 'pending') continue;
 
@@ -235,7 +255,7 @@ export default function BulkBuilder() {
       setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'compiling' } : f));
 
       try {
-        // 1. Prepare and merge data
+        // 1. Merge contact credentials into resume data
         const mergedData = {
           ...SAFE_DEFAULTS,
           ...listToProcess[i].data,
@@ -243,17 +263,15 @@ export default function BulkBuilder() {
           contactInformation: phone
         };
 
-        // 2. Set as active data for Preview component
+        // 2. Render into the hidden Preview node
         setActiveResumeData(mergedData);
 
-        // 3. Wait for rendering cycle to finish and CSS to apply
+        // 3. Wait for React render + CSS paint
         await new Promise(resolve => setTimeout(resolve, 800));
 
-        // 4. Extract rendered HTML and stylesheets
+        // 4. Capture rendered HTML
         const previewEl = document.getElementById("preview-section");
-        if (!previewEl) {
-          throw new Error("Preview wrapper (#preview-section) not found in DOM");
-        }
+        if (!previewEl) throw new Error("Preview wrapper (#preview-section) not found in DOM");
 
         const html = previewEl.innerHTML;
         const styleTags = Array.from(document.querySelectorAll("style"))
@@ -264,60 +282,112 @@ export default function BulkBuilder() {
           .join("\n");
         const styles = `${linkTags}\n${styleTags}`;
 
-        // 5. Post HTML/Styles to server API (with auto-retry)
-        let response;
-        let data;
-        let attempts = 0;
-
-        while (attempts < 2) {
-          try {
-            attempts++;
-            response = await fetch("/api/generate-pdf", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ html, styles }),
-            });
-            data = await response.json();
-            if (response.ok) break;
-          } catch (fetchErr) {
-            if (attempts >= 2) throw fetchErr;
-            await new Promise(resolve => setTimeout(resolve, 800));
-          }
-        }
-
-        if (!response || !response.ok) {
-          throw new Error(data?.details || data?.error || "Server-side PDF compile failed");
-        }
-
-        // 6. Decode PDF base64 and write into JSZip structure
-        const byteCharacters = atob(data.pdf);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let j = 0; j < byteCharacters.length; j++) {
-          byteNumbers[j] = byteCharacters.charCodeAt(j);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "application/pdf" });
-
-        // Add file inside folder: folderName/Omkar_Gharat_resume.pdf
-        const folder = zip.folder(listToProcess[i].folder);
-        folder.file("Omkar_Gharat_resume.pdf", blob);
-
-        // Success
-        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'completed' } : f));
-        completedCount++;
+        renderedItems.push({ index: i, html, styles, folder: listToProcess[i].folder, name: listToProcess[i].name });
       } catch (err) {
-        console.error("Compilation error on file:", listToProcess[i].name, err);
-        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'failed', error: err.message } : f));
+        console.error("Render error on file:", listToProcess[i].name, err);
+        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'failed', error: 'Render failed: ' + err.message } : f));
       }
 
-      // Short wait between files
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    // ── PHASE 2: Send rendered HTMLs to the API in batches of BATCH_SIZE ────
+    // One Chromium launch per batch → no /tmp exhaustion.
+    let completedCount = 0;
+
+    for (let batchStart = 0; batchStart < renderedItems.length; batchStart += BATCH_SIZE) {
+      const batchItems = renderedItems.slice(batchStart, batchStart + BATCH_SIZE);
+
+      // Build the batch payload
+      const batchPayload = batchItems.map(item => ({
+        html: item.html,
+        styles: item.styles,
+        fileName: item.name,
+      }));
+
+      let batchResults = null;
+      let attempts = 0;
+
+      // Auto-retry the batch once on network failure
+      while (attempts < 2) {
+        try {
+          attempts++;
+          const response = await fetch("/api/generate-pdf", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ batch: batchPayload }),
+          });
+          const data = await response.json();
+          if (response.ok && data.results) {
+            batchResults = data.results;
+            break;
+          }
+          // Server returned a top-level error (e.g. browser failed to launch)
+          throw new Error(data?.details || data?.error || `Batch failed (HTTP ${response.status})`);
+        } catch (fetchErr) {
+          if (attempts >= 2) {
+            // Mark all items in this batch as failed
+            for (const item of batchItems) {
+              setFiles(prev => prev.map((f, idx) => idx === item.index
+                ? { ...f, status: 'failed', error: 'Batch network error: ' + fetchErr.message }
+                : f
+              ));
+            }
+          } else {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+      }
+
+      if (!batchResults) continue;
+
+      // Process individual results from the batch response
+      for (let b = 0; b < batchItems.length; b++) {
+        const item = batchItems[b];
+        const result = batchResults[b];
+
+        if (!result || result.error) {
+          const errMsg = result?.error || 'Unknown server error';
+          console.error("PDF error on file:", item.name, errMsg);
+          setFiles(prev => prev.map((f, idx) => idx === item.index
+            ? { ...f, status: 'failed', error: errMsg }
+            : f
+          ));
+          continue;
+        }
+
+        try {
+          // Decode PDF base64 → Uint8Array → Blob → add to persistent ZIP
+          const byteCharacters = atob(result.pdf);
+          const byteNumbers = new Uint8Array(byteCharacters.length);
+          for (let j = 0; j < byteCharacters.length; j++) {
+            byteNumbers[j] = byteCharacters.charCodeAt(j);
+          }
+          const blob = new Blob([byteNumbers], { type: "application/pdf" });
+
+          const folder = zipRef.current.folder(item.folder);
+          folder.file("Omkar_Gharat_resume.pdf", blob);
+
+          setFiles(prev => prev.map((f, idx) => idx === item.index ? { ...f, status: 'completed' } : f));
+          setReadyCount(prev => prev + 1);
+          completedCount++;
+        } catch (decodeErr) {
+          console.error("PDF decode error:", item.name, decodeErr);
+          setFiles(prev => prev.map((f, idx) => idx === item.index
+            ? { ...f, status: 'failed', error: 'PDF decode failed: ' + decodeErr.message }
+            : f
+          ));
+        }
+      }
+
+      // Small breathing room between batches
       await new Promise(resolve => setTimeout(resolve, 300));
     }
 
-    // 7. Download Zip File (Only if at least 1 file completed successfully)
+    // ── PHASE 3: Auto-download the full ZIP when everything is done ──────────
     if (completedCount > 0) {
       try {
-        const content = await zip.generateAsync({ type: "blob" });
+        const content = await zipRef.current.generateAsync({ type: "blob" });
         saveAs(content, "Omkar_Gharat_Resumes.zip");
       } catch (zipErr) {
         alert("Failed to build ZIP file: " + zipErr.message);
@@ -456,6 +526,16 @@ export default function BulkBuilder() {
                 <span className="text-xs text-gray-500">{files.length} {files.length === 1 ? 'file' : 'files'} in queue</span>
               </div>
               <div className="flex items-center space-x-2">
+                {files.some(f => f.status === 'completed') && (
+                  <button
+                    onClick={downloadReady}
+                    disabled={isCompiling}
+                    className="text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-lg disabled:opacity-50 transition-colors focus:outline-none flex items-center space-x-1"
+                    title="Download all successfully generated resumes as a ZIP"
+                  >
+                    <span>⬇ Download Ready ({files.filter(f => f.status === 'completed').length})</span>
+                  </button>
+                )}
                 {files.some(f => f.status === 'completed') && (
                   <button
                     onClick={removeCompletedFiles}
