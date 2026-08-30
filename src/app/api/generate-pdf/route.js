@@ -30,17 +30,11 @@ async function getBrowserInstance() {
     return globalBrowser;
   }
 
-  // Local Windows dev — prioritize Chrome and Edge over Firefox for stable CDP printToPDF support
+  // Primary Default: Sigma → Firefox
   const candidates = [
-    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
-    process.env.LOCALAPPDATA
-      ? `${process.env.LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe`
-      : "",
-    "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
-    "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
     "C:\\Apps\\CR_618FA.tmp\\CHROME.PACKED\\chrome\\Chrome-bin\\sigma.exe",
-    "C:\\Users\\Omkar\\Downloads\\FirefoxPortable\\FirefoxPortable.exe",
+    "C:\\Apps\\FirefoxPortable\\App\\Firefox64\\firefox.exe",
+    "C:\\Apps\\FirefoxPortable\\App\\Firefox\\firefox.exe",
   ].filter(Boolean);
 
   const executablePath = candidates.find((p) => existsSync(p));
