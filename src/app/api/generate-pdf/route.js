@@ -96,7 +96,7 @@ async function generatePdfFromPage(browser, html, styles) {
       format: "A4",
       printBackground: true,
       displayHeaderFooter: false,
-      margin: { top: "0.35in", bottom: "0.35in", left: "0.35in", right: "0.35in" },
+      margin: { top: "0.4in", bottom: "0.4in", left: "0.4in", right: "0.4in" },
     });
     return { pdf: Buffer.from(pdfBuffer).toString("base64"), error: null };
   } finally {
